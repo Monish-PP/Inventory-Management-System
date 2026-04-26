@@ -1,5 +1,13 @@
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+env_path = Path(__file__).resolve().parent.parent / ".env"
+if env_path.exists():
+    load_dotenv(dotenv_path=env_path)
+else:
+    load_dotenv()  # fallback to system env
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -88,18 +96,37 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 LOGIN_URL = "/login/"
 LOGOUT_REDIRECT_URL = "/"
 
-# Email Settings
-# To receive real emails, fill in EMAIL_HOST_USER and EMAIL_HOST_PASSWORD below.
-# If you use Gmail, you must generate an "App Password" (not your regular password).
-# App Passwords: https://myaccount.google.com/apppasswords
+# ── Email Settings ──────────────────────────────────────────────
+# To receive real emails:
+#   1. Copy .env.example to .env
+#   2. Fill in EMAIL_HOST_USER and EMAIL_HOST_PASSWORD
+#   3. Restart the Django server
 #
-# If you prefer a different provider, change EMAIL_HOST (e.g. smtp.office365.com,
-# smtp.mailgun.org, etc.) and adjust EMAIL_PORT / EMAIL_USE_TLS accordingly.
+# Gmail users MUST generate an "App Password" (not your regular password):
+#   https://myaccount.google.com/apppasswords
+#
+# If you use Outlook/Yahoo/Mailgun/etc., change EMAIL_HOST accordingly.
+# ───────────────────────────────────────────────────────────────
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = ""  # <-- YOUR EMAIL ADDRESS HERE (e.g. you@gmail.com)
-EMAIL_HOST_PASSWORD = ""  # <-- YOUR APP PASSWORD HERE
-DEFAULT_FROM_EMAIL = "Inventory System <noreply@inventory.local>"
+_email_user = os.getenv("EMAIL_HOST_USER", "").strip()
+_email_pass = os.getenv("EMAIL_HOST_PASSWORD", "").strip()
+
+if _email_user and _email_pass:
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
+    EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
+    EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True").lower() in ("true", "1", "yes")
+    EMAIL_HOST_USER = _email_user
+    EMAIL_HOST_PASSWORD = _email_pass
+    DEFAULT_FROM_EMAIL = os.getenv(
+        "DEFAULT_FROM_EMAIL", f"Inventory System <{_email_user}>"
+    )
+else:
+    # Fallback to console so the app still works without credentials
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+    EMAIL_HOST = ""
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = ""
+    EMAIL_HOST_PASSWORD = ""
+    DEFAULT_FROM_EMAIL = "Inventory System <noreply@inventory.local>"
