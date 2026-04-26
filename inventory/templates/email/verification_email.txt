@@ -1,0 +1,12 @@
+Welcome to Inventory Management System
+
+Hi {{ user.username }},
+
+Thank you for registering. Please verify your email address by visiting the link below:
+
+{{ verification_link }}
+
+If you did not create an account, you can safely ignore this email.
+
+© 2026 Inventory Management System
+
