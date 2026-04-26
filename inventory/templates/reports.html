@@ -68,16 +68,9 @@
 
 <!-- Recent Transactions -->
 <div class="card mb-4">
-    <div class="card-header d-flex justify-content-between">
+    <div class="card-header d-flex justify-content-between align-items-center">
         <h4>📋 Recent Transactions</h4>
-    <a href="#all-transactions" class="btn btn-outline-primary btn-sm">View All →</a>
-
-<script>
-function exportPDF() {
-  const format = document.getElementById('date-format').value;
-  window.location.href = "{% url 'inventory:pdf_reports' %}?date_format=" + format;
-}
-</script>
+        <a href="#all-transactions" class="btn btn-outline-primary btn-sm">View All →</a>
     </div>
 
     <div class="card-body">
@@ -190,4 +183,13 @@ function exportPDF() {
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function exportPDF() {
+  const format = document.getElementById('date-format').value;
+  window.location.href = "{% url 'inventory:pdf_reports' %}?date_format=" + format;
+}
+</script>
 {% endblock %}
