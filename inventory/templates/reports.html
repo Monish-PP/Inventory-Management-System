@@ -189,7 +189,9 @@
 <script>
 function exportPDF() {
   const format = document.getElementById('date-format').value;
-  window.location.href = "{% url 'inventory:pdf_reports' %}?date_format=" + format;
+  let url = "{% url 'inventory:pdf_reports' %}?date_format=" + format;
+  window.location.href = url;
 }
 </script>
 {% endblock %}
+

@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
-from django.core.mail import send_mail, EmailMessage
+from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.db.models import Sum
 from .forms import CustomUserCreationForm
@@ -369,27 +369,6 @@ def pdf_reports(request):
     story.append(footer)
 
     doc.build(story)
-
-    # Email PDF to registered user
-    if request.user.is_authenticated and request.user.email:
-        try:
-            email = EmailMessage(
-                subject="Your Inventory Report",
-                body=(
-                    f"Hi {request.user.username},\n\n"
-                    f"Please find your requested inventory report attached.\n\n"
-                    f"Generated on: {datetime.now().strftime('%B %d, %Y - %I:%M %p')}"
-                ),
-                from_email=None,
-                to=[request.user.email],
-            )
-            email.attach("inventory_report.pdf", buffer.getvalue(), "application/pdf")
-            email.send()
-            messages.success(
-                request, "Report has been emailed to your registered email address."
-            )
-        except Exception as e:
-            messages.warning(request, f"Could not email the report: {e}")
 
     buffer.seek(0)
     response = HttpResponse(buffer, content_type="application/pdf")
