@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from pickle import FALSE
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -12,7 +13,7 @@ else:
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = "django-insecure-your-secret-key-change-in-production"
-DEBUG = True
+DEBUG = FALSE
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "testserver"]
 
 
